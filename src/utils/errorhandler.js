@@ -5,31 +5,26 @@ const customError = (status, message = null, name = null) => {
   error.userError = true;
   return error;
 };
-
-exports.customError = customError;
-exports.validationError = (message) => {
+const validationError = (message) => {
   return customError(422, message, "Validation Error");
 };
-exports.authenticationError = (message) => {
+const authenticationError = (message) => {
   return customError(401, message, "Authentication Error");
 };
-exports.authorizationError = (message) => {
+const authorizationError = (message) => {
   return customError(403, message, "Authorization Error");
 };
-exports.notFoundError = (message) => {
+const notFoundError = (message) => {
   return customError(404, message, "Not Found");
 };
-exports.conflictError = (message) => {
+const conflictError = (message) => {
   return customError(409, message, "Conflict Error");
 };
-exports.badRequestError = (message) => {
+const badRequestError = (message) => {
   return customError(400, message, "Bad Request");
 };
 
-module.exports = () => (error, req, res, next) => {
-  if (error === "404") {
-    error = exports.notFoundError("You have reached an undefined route");
-  }
+const errorHandler = () => (error, req, res, next) => {
   // Log error if application error
   if (typeof error !== "object" || !error.userError) {
     console.log({ message: error.message, stack: error.stack, ...error });
@@ -44,4 +39,15 @@ module.exports = () => (error, req, res, next) => {
     status: error.status,
     error: error.name,
   });
+};
+
+module.exports = {
+  errorHandler,
+  badRequestError,
+  conflictError,
+  notFoundError,
+  authenticationError,
+  authorizationError,
+  validationError,
+  customError,
 };

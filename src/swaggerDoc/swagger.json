@@ -6,7 +6,7 @@
     "description": "An API where users can save and rate movies."
   },
   "basePath": "/api/v1/",
-  "schemes": ["https", "http"],
+  "schemes": ["http", "https"],
   "securityDefinitions": {
     "Bearer": {
       "type": "apiKey",
@@ -26,9 +26,221 @@
   "produces": ["application/json"],
   "tags": [
     {
-      "name": "Subscription",
-      "description": "Subscription Endpoints"
+      "name": "Authentication",
+      "description": "Authentication Endpoints"
     }
   ],
-  "paths": {}
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "tags": ["Authentication"],
+        "description": "Signup user",
+        "operationId": "signupuser",
+        "security": [],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "request body",
+            "description": "signup creds",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "j_doe"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "password123."
+                },
+                "email": {
+                  "type": "string",
+                  "example": "j_doe@mail.com"
+                },
+                "fullName": {
+                  "type": "string",
+                  "example": "John Doe"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Request was successful",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "number",
+                  "example": 201
+                },
+                "message": {
+                  "type": "string",
+                  "example": "user created"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2020-08-30T13:12:02.018Z"
+                    },
+                    "email": { "type": "string", "example": "j_doe@mail.com" },
+                    "fullName": { "type": "string", "example": "John Doe" },
+                    "jwt": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTg4MDE3NjIxLjYyLCJfaWQiOiI1ZjRiYTVhMTk0YWQyMjJkZTA0OTRkMmEiLCJpYXQiOjE1OTg3OTMxMjJ9.nDCkjQAlFlgscriD3i_7ETSzOrp0f1LRN-vwiREvy3w"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "example": "2020-08-30T13:12:02.018Z"
+                    },
+                    "username": { "type": "string", "example": "j_doe" },
+                    "_v": { "type": "number" },
+                    "_id": {
+                      "type": "string",
+                      "example": "5f4ba5a194ad222de0494d2a"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The chosen username and/or email already exists",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/400"
+            }
+          },
+          "422": {
+            "description": "Either missing a required field or an invalid value in one of the fields",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/422"
+            }
+          }
+        }
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "tags": ["Authentication"],
+        "description": "Singin user",
+        "operationId": "signinuser",
+        "security": [],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "request body",
+            "description": "signin creds",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": { "type": "string", "example": "j_doe" },
+                "password": { "type": "string", "example": "password123." }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "descripion": "user was successfully signed in",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": { "type": "number", "example": 200 },
+                "message": { "type": "string", "example": "signin successful" },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2020-08-30T12:39:46.642Z"
+                    },
+                    "email": { "type": "string", "example": "j_doe@mail.com" },
+                    "fullName": { "type": "string", "example": "John Doe" },
+                    "jwt": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTg4MDYzMDY0LjU2LCJfaWQiOiI1ZjRiOWUxMjJlNjllZDIzZTA1ZTVlZDgiLCJpYXQiOjE1OTg3OTc2NjZ9.RjW__c64pa6U4hgX3PPTJuFn8qD9Su-DF52jgTcki-s"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "example": "2020-08-30T12:39:46.642Z"
+                    },
+                    "username": { "type": "string", "example": "j_doe" },
+                    "__v": { "type": "string", "example": "0" },
+                    "_id": {
+                      "type": "string",
+                      "example": "5f4b9e122e69ed23e05e5ed8"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "invalid signin credentials",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/401"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Error Responses": {
+      "400": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "array": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "example": {
+                "slap": "knock"
+              }
+            }
+          },
+          "message": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string",
+            "example": "Bad Request Error"
+          }
+        }
+      },
+      "422": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "number",
+            "example": 422
+          },
+          "message": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string",
+            "example": "Validation Error"
+          }
+        }
+      },
+      "401": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string", "example": "invalid credentials" },
+          "status": { "type": "number", "example": 401 },
+          "error": { "type": "string", "example": "Authentication Error" }
+        }
+      }
+    }
+  }
 }

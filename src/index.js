@@ -4,14 +4,13 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const routes = require("./routes");
-const error = require("./utils/errorhandler");
+const { errorHandler, notFoundError } = require("./utils/errorhandler");
 
 dotenv.config();
 
 const app = express();
 app.enable("trust proxy");
 app.use(cors());
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -31,10 +30,12 @@ mongoose
   });
 
 app.use(routes);
-app.use("*", (req, res, next) => next("404"));
-app.use(error());
-const PORT = process.env.PORT || 4000;
+app.use("*", (req, res, next) => {
+  return next(notFoundError("You have reached an undefined route"));
+});
+app.use(errorHandler());
 
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 
 module.exports = app;
