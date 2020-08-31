@@ -6,7 +6,7 @@
     "description": "An API where users can save and rate movies."
   },
   "basePath": "/api/v1/",
-  "schemes": ["http", "https"],
+  "schemes": ["https", "http"],
   "securityDefinitions": {
     "Bearer": {
       "type": "apiKey",
@@ -28,6 +28,10 @@
     {
       "name": "Authentication",
       "description": "Authentication Endpoints"
+    },
+    {
+      "name": "Movies & Lists",
+      "description": "Endpoints for retrieving movies and creating and operating on lists"
     }
   ],
   "paths": {
@@ -188,6 +192,578 @@
           }
         }
       }
+    },
+    "/movies": {
+      "get": {
+        "tags": ["Movies & Lists"],
+        "description": "Get a list of 200 movies",
+        "operationId": "getMovies",
+        "security": [{ "Bearer": {} }],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "descripion": "request completed successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Movie list"
+                },
+                "status": {
+                  "type": "number",
+                  "example": 200
+                },
+                "data": {
+                  "type": "object",
+                  "example": {
+                    "page": 1,
+                    "results": [
+                      {
+                        "adult": false,
+                        "backdrop_path": "/bga3i5jcejBekr2FCGJga1fYCh.jpg",
+                        "genre_ids": [16, 10749, 10751],
+                        "id": 486589,
+                        "original_language": "en",
+                        "original_title": "Red Shoes and the Seven Dwarfs",
+                        "overview": "Princes who have been turned into Dwarfs seek the red shoes of a lady in order to break the spell, although it will not be easy.",
+                        "popularity": 66.187,
+                        "poster_path": "/MBiKqTsouYqAACLYNDadsjhhC0.jpg",
+                        "release_date": "2019-07-25",
+                        "title": "Red Shoes and the Seven Dwarfs",
+                        "video": false,
+                        "vote_average": 7.3,
+                        "vote_count": 386
+                      },
+                      "...199 more..."
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/403"
+            }
+          }
+        }
+      }
+    },
+    "/movies/lists": {
+      "post": {
+        "tags": ["Movies & Lists"],
+        "description": "Create your own personal list where you can add movies",
+        "operationId": "createList",
+        "security": [{ "Bearer": {} }],
+        "parameters": [
+          {
+            "in": "body",
+            "descripteion": "list creation data",
+            "name": "request body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "example": {
+                "name": "My first list on platform",
+                "description": "My awesome list"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "descripion": "request completed successfully",
+            "schema": {
+              "type": "object",
+              "example": {
+                "status": 200,
+                "message": "list created",
+                "data": {
+                  "createdAt": "2020-08-31T22:16:43.552Z",
+                  "description": "My awesome list",
+                  "name": "My first list on platform",
+                  "updatedAt": "2020-08-31T22:16:43.552Z",
+                  "user": "5f4d5547994c6329c8786c64",
+                  "__v": 0,
+                  "_id": "5f4d76cb9ff3691bcc263c08"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/403"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Movies & Lists"],
+        "description": "Get all your lists",
+        "operationId": "getLists",
+        "security": [{ "Bearer": {} }],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "descripion": "request completed successfully",
+            "schema": {
+              "type": "object",
+              "example": {
+                "status": 200,
+                "message": "your lists",
+                "data": [
+                  {
+                    "_id": "5f4d76cb9ff3691bcc263c08",
+                    "user": "5f4d5547994c6329c8786c64",
+                    "name": "My first list on platform",
+                    "description": "My awesome list",
+                    "createdAt": "2020-08-31T22:16:43.552Z",
+                    "updatedAt": "2020-08-31T22:16:43.552Z",
+                    "__v": 0
+                  }
+                ]
+              }
+            }
+          },
+          "403": {
+            "description": "unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/403"
+            }
+          }
+        }
+      }
+    },
+    "/movies/lists/{list_id}": {
+      "post": {
+        "tags": ["Movies & Lists"],
+        "description": "Add a single movie to a created list",
+        "operationId": "addSingleMovie",
+        "security": [{ "Bearer": {} }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "list_id",
+            "required": true,
+            "description": "The _id of the list to add the movie to",
+            "schema": {
+              "type": "string",
+              "example": "5f4d76cb9ff3691bcc263c08"
+            }
+          },
+          {
+            "in": "body",
+            "name": "request body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "id of movie to be added",
+                  "example": "486589"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "descripion": "request completed successfully",
+            "schema": {
+              "type": "object",
+              "example": {
+                "status": 200,
+                "message": "movie added successfully",
+                "data": {
+                  "list": "5f4d76cb9ff3691bcc263c08",
+                  "id": "486589",
+                  "createdAt": "2020-08-31T22:40:47.002Z",
+                  "updatedAt": "2020-08-31T22:40:47.002Z",
+                  "__v": 0
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Could not find either movie or list",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/404"
+            }
+          },
+          "403": {
+            "description": "unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/403"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Movies & Lists"],
+        "description": "Get all movies in a list",
+        "operationId": "getListMovies",
+        "security": [{ "Bearer": {} }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "list_id",
+            "required": true,
+            "description": "The _id of the list",
+            "schema": {
+              "type": "string",
+              "example": "5f4d76cb9ff3691bcc263c08"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "descripion": "request completed successfully",
+            "schema": {
+              "type": "object",
+              "example": {
+                "status": 200,
+                "message": "movie added successfully",
+                "data": {
+                  "_id": "5f4d76cb9ff3691bcc263c08",
+                  "user": "5f4d5547994c6329c8786c64",
+                  "name": "My first list on platform",
+                  "description": "My awesome list",
+                  "createdAt": "2020-08-31T22:16:43.552Z",
+                  "updatedAt": "2020-08-31T22:16:43.552Z",
+                  "__v": 0,
+                  "items": [
+                    {
+                      "adult": false,
+                      "backdrop_path": "/bga3i5jcejBekr2FCGJga1fYCh.jpg",
+                      "belongs_to_collection": null,
+                      "budget": 0,
+                      "genres": [
+                        {
+                          "id": 16,
+                          "name": "Animation"
+                        },
+                        {
+                          "id": 10749,
+                          "name": "Romance"
+                        },
+                        {
+                          "id": 10751,
+                          "name": "Family"
+                        }
+                      ],
+                      "homepage": "",
+                      "id": 486589,
+                      "imdb_id": "tt4429160",
+                      "original_language": "en",
+                      "original_title": "Red Shoes and the Seven Dwarfs",
+                      "overview": "Princes who have been turned into Dwarfs seek the red shoes of a lady in order to break the spell, although it will not be easy.",
+                      "popularity": 66.187,
+                      "poster_path": "/MBiKqTsouYqAACLYNDadsjhhC0.jpg",
+                      "production_companies": [
+                        {
+                          "id": 3657,
+                          "logo_path": "/2YXnZa6yPjxdHKzBLgmf57D8QpM.png",
+                          "name": "Sidus",
+                          "origin_country": "KR"
+                        },
+                        {
+                          "id": 20064,
+                          "logo_path": "/6HvsksiEE7DknfZU5HT1mUs563q.png",
+                          "name": "Next Entertainment World",
+                          "origin_country": "KR"
+                        },
+                        {
+                          "id": 121669,
+                          "logo_path": null,
+                          "name": "Locus Creative Studios",
+                          "origin_country": ""
+                        }
+                      ],
+                      "production_countries": [
+                        {
+                          "iso_3166_1": "KR",
+                          "name": "South Korea"
+                        }
+                      ],
+                      "release_date": "2019-07-25",
+                      "revenue": 5362776,
+                      "runtime": 92,
+                      "spoken_languages": [
+                        {
+                          "iso_639_1": "en",
+                          "name": "English"
+                        }
+                      ],
+                      "status": "Released",
+                      "tagline": "",
+                      "title": "Red Shoes and the Seven Dwarfs",
+                      "video": false,
+                      "vote_average": 7.3,
+                      "vote_count": 392
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Could not find list",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/404"
+            }
+          },
+          "403": {
+            "description": "unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/403"
+            }
+          }
+        }
+      }
+    },
+    "/movies/lists/{list_id}/{movie_id}": {
+      "post": {
+        "description": "Rate a movie in your list and can also update rating by posting the new rating and your old one will be overwritten",
+        "tags": ["Movies & Lists"],
+        "operationId": "rateMovie",
+        "security": [{ "Bearer": {} }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "list_id",
+            "required": true,
+            "description": "The _id of the list",
+            "schema": {
+              "type": "string",
+              "example": "5f4d76cb9ff3691bcc263c08"
+            }
+          },
+          {
+            "in": "path",
+            "name": "movie_id",
+            "required": true,
+            "description": "The id of the movie",
+            "schema": {
+              "type": "string",
+              "example": "486589"
+            }
+          },
+          {
+            "in": "body",
+            "name": "request body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "example": {
+                "value": 4
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "descripion": "request completed successfully",
+            "schema": {
+              "type": "object",
+              "example": {
+                "status": 200,
+                "message": "success",
+                "data": "4"
+              }
+            }
+          },
+          "404": {
+            "description": "Could not find either list or movie",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/404"
+            }
+          },
+          "403": {
+            "description": "unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/403"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Movies & Lists"],
+        "description": "Removes a single movie from your list",
+        "operationId": "removeMovie",
+        "security": [{ "Bearer": {} }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "list_id",
+            "required": true,
+            "description": "The _id of the list",
+            "schema": {
+              "type": "string",
+              "example": "5f4d76cb9ff3691bcc263c08"
+            }
+          },
+          {
+            "in": "path",
+            "name": "movie_id",
+            "required": true,
+            "description": "The id of the movie",
+            "schema": {
+              "type": "string",
+              "example": "486589"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "descripion": "request completed successfully",
+            "schema": {
+              "type": "object",
+              "example": {
+                "status": 200,
+                "message": "movie removed from list",
+                "data": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Could not find either list or movie",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/404"
+            }
+          },
+          "403": {
+            "description": "unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/403"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Movies & Lists"],
+        "description": "Gets a single movie from a list",
+        "operationId": "getMovieFromList",
+        "security": [{ "Bearer": {} }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "list_id",
+            "required": true,
+            "description": "The _id of the list",
+            "schema": {
+              "type": "string",
+              "example": "5f4d76cb9ff3691bcc263c08"
+            }
+          },
+          {
+            "in": "path",
+            "name": "movie_id",
+            "required": true,
+            "description": "The id of the movie",
+            "schema": {
+              "type": "string",
+              "example": "486589"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "descripion": "request completed successfully",
+            "schema": {
+              "type": "object",
+              "example": {
+                "status": 200,
+                "message": "your movie",
+                "data": {
+                  "adult": false,
+                  "backdrop_path": "/bga3i5jcejBekr2FCGJga1fYCh.jpg",
+                  "belongs_to_collection": null,
+                  "budget": 0,
+                  "genres": [
+                    {
+                      "id": 16,
+                      "name": "Animation"
+                    },
+                    {
+                      "id": 10749,
+                      "name": "Romance"
+                    },
+                    {
+                      "id": 10751,
+                      "name": "Family"
+                    }
+                  ],
+                  "homepage": "",
+                  "id": 486589,
+                  "imdb_id": "tt4429160",
+                  "original_language": "en",
+                  "original_title": "Red Shoes and the Seven Dwarfs",
+                  "overview": "Princes who have been turned into Dwarfs seek the red shoes of a lady in order to break the spell, although it will not be easy.",
+                  "popularity": 66.187,
+                  "poster_path": "/MBiKqTsouYqAACLYNDadsjhhC0.jpg",
+                  "production_companies": [
+                    {
+                      "id": 3657,
+                      "logo_path": "/2YXnZa6yPjxdHKzBLgmf57D8QpM.png",
+                      "name": "Sidus",
+                      "origin_country": "KR"
+                    },
+                    {
+                      "id": 20064,
+                      "logo_path": "/6HvsksiEE7DknfZU5HT1mUs563q.png",
+                      "name": "Next Entertainment World",
+                      "origin_country": "KR"
+                    },
+                    {
+                      "id": 121669,
+                      "logo_path": null,
+                      "name": "Locus Creative Studios",
+                      "origin_country": ""
+                    }
+                  ],
+                  "production_countries": [
+                    {
+                      "iso_3166_1": "KR",
+                      "name": "South Korea"
+                    }
+                  ],
+                  "release_date": "2019-07-25",
+                  "revenue": 5362776,
+                  "runtime": 92,
+                  "spoken_languages": [
+                    {
+                      "iso_639_1": "en",
+                      "name": "English"
+                    }
+                  ],
+                  "status": "Released",
+                  "tagline": "",
+                  "title": "Red Shoes and the Seven Dwarfs",
+                  "video": false,
+                  "vote_average": 7.3,
+                  "vote_count": 392
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Could not find either list or movie",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/404"
+            }
+          },
+          "403": {
+            "description": "unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/Error Responses/403"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -239,6 +815,22 @@
           "message": { "type": "string", "example": "invalid credentials" },
           "status": { "type": "number", "example": 401 },
           "error": { "type": "string", "example": "Authentication Error" }
+        }
+      },
+      "403": {
+        "type": "object",
+        "example": {
+          "message": "unauthorized",
+          "status": 403,
+          "error": "Authorization Error"
+        }
+      },
+      "404": {
+        "type": "object",
+        "example": {
+          "message": "could not find the resource you're looking for",
+          "status": 403,
+          "error": "Authorization Error"
         }
       }
     }
