@@ -25,9 +25,19 @@ const badRequestError = (message) => {
 };
 
 const errorHandler = () => (error, req, res, next) => {
+  if (error.kind === "ObjectId") {
+    error = notFoundError("could not find the resource you were looking for.");
+  }
   // Log error if application error
   if (typeof error !== "object" || !error.userError) {
-    console.log({ message: error.message, stack: error.stack, ...error });
+    (async (error) => {
+      //  Log the error much later so we don't block anything
+      setTimeout(console.log, 3000, {
+        message: error.message,
+        stack: error.stack,
+        ...error,
+      });
+    })(error);
     error = {};
     error.name = "SERVER_ERROR";
     error.message = "An unexpected error has occurred";

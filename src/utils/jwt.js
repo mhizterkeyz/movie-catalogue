@@ -1,6 +1,6 @@
 const JWT = require("jsonwebtoken");
 const { authenticationError, authorizationError } = require("./errorhandler");
-const UsersServic = require("../services/UsersServic");
+const Users = require("../models/Users");
 
 const signToken = (_id) => {
   return JWT.sign(
@@ -32,7 +32,7 @@ const jwt = () => async (req, res, next) => {
       throw authenticationError(error.message);
     }
 
-    const user = await UsersServic.getSingleUser({ _id });
+    const user = await Users.findOne({ _id });
     if (!user) {
       throw authorizationError("unauthorized");
     }

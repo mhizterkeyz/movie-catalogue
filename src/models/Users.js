@@ -24,6 +24,10 @@ const UsersSchema = new Schema(
       type: String,
       required: true,
     },
+    guest_session_id: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true }
 );
@@ -51,4 +55,4 @@ UsersSchema.methods = {
   },
 };
 
-module.exports = model("user", UsersSchema);
+module.exports = model("mhizterkeyz-user", UsersSchema);

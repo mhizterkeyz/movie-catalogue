@@ -24,4 +24,5 @@ module.exports = {
     .message(
       "fullname should be at least 4 characters long and just your first and last name"
     ),
+  string: Joi.string().min(5),
 };
