@@ -2,7 +2,7 @@
 
 ## An API where users can save and rate movies.
 
-- [Swagger Documentation on Heroku](https://mhizterkeyz-movies.herokuapp.com)
+- [Swagger Documentation on Heroku](https://mhizterkeyz-movies.herokuapp.com/api/docs)
 
 ## Technologies Used
 
